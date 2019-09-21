@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>EZDraw 1.0 - David Programa</title>
+    <script src="ace/ace.js"></script>
+    <script src="ezdraw.js"></script>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+}        
+body {
+    background-color: #333;
+}    
+
+#titlebar {
+    background-color: #248;
+    height: 50px;
+    color: white;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 30px;
+    line-height: 50px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+#title {
+    float: left;
+    margin-left: 20px;
+    cursor: default;
+    font-weight: bold;
+}
+
+#reslabel {
+    display:none;
+}
+
+#incfont:hover, #decfont:hover, #ezrun:hover {
+    color: #FC4;
+}
+
+#incfont, #decfont, #ezrun {
+    float: right;
+    padding: 0px 10px;
+    margin-right: 30px;
+    margin-top: 3px;
+    font-size: 24px;
+    line-height: 40px;
+    align-self: right;
+    cursor: pointer;
+    border-top: 2px solid #CCC8;
+    border-left: 2px solid #CCC8;
+    border-right: 2px solid #2228;
+    border-bottom: 2px solid #2228;
+    border-radius: 5px;
+    user-select: none;
+
+}
+
+#ezdraw {
+    position: fixed;
+    border-radius: 10px;
+}
+
+#eztextframe {
+    position: fixed;
+    background-color: #FFF;
+    border-radius: 10px;
+}
+
+#eztext {
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    border: none;
+    outline: none;
+    font-size: 27px;
+    border-radius: 10px;
+}
+    </style>
+</head>
+<body>
+    <div id="titlebar">
+        <span id="title">DavidPrograma | EZDraw 1.0</span>
+        <span id="reslabel">dibujo: 1234 x 567</span>
+        <span id="ezrun">▶ (ctrl+enter)</span>
+        <span id="decfont">a-</span>
+        <span id="incfont">A+</span>
+    </div>
+    <canvas id="ezdraw"></canvas>
+    <div id="eztextframe">
+        <div id="eztext"></div>
+    </div>
+
+    <textarea id="hiddenTextArea" style='display:none'></textarea>
+
+
+    <script>
+//////////////////////////////////////////////////
+
+//let exampleCode = '';
+let exampleCode = `\
+let numsem = 5000;
+let dospi = 2 * Math.PI;
+let phi = 0.61803399;
+
+function xyForSeedIndex(i)
+{
+    let k = i / numsem;
+//    let r = 1000 * Math.sqrt(k);
+    let r = 1000 * k;
+    let a = i * dospi * phi;
+    let x = r * Math.cos(a);
+    let y = r * Math.sin(a);
+    return {x:x,y:y};
+}
+
+let _fib = [0,1];
+function fib(n)
+{
+    while(n >= _fib.length) {
+        let l = _fib.length;
+        _fib.push(_fib[l-1] + _fib[l-2]);
+    }
+    return _fib[n];
+}
+
+function drawSeeds()
+{
+    for (let i = 0; i < numsem; i++)
+    {
+        let xy = xyForSeedIndex(i);
+        circle(xy.x, xy.y, 5);
+    }
+}
+
+function drawSpiral(i)
+{
+    f = fib(i);
+    for (let j = 0; j < f; j++)
+    {
+        points = [];
+        for (let i = j; i < numsem; i += f)
+        {
+            let xy = xyForSeedIndex(i);
+            points.push(xy.x);
+            points.push(xy.y);
+        }
+        polyline(points);
+    }
+}
+
+function draw()
+{
+    clear('white');
+
+    linewidth(2);
+    linecolor('blue');
+    drawSpiral(11);
+    linecolor('red');
+    drawSpiral(12);
+    
+    linewidth(5);
+    linecolor('#640');
+    fillcolor('#FC0');
+    drawSeeds();
+    
+}
+`;
+
+exampleCode = "clear('white');"
+
+ez.onCodeException = function(e)
+{
+    console.log(e);
+    let errmsg = '' + e.toString() + '\n';
+    if (e.lineNumber) errmsg += 'at line ' + e.lineNumber;
+    if (e.lineNumber) errmsg += ', column ' + e.columnNumber + '\n';
+    errmsg += '\n'+ e.stack;
+    alert(errmsg);
+    ez.e = e;
+}
+
+let doc = {};
+
+function changeFont(delta)
+{
+    let fontsize = parseInt(getComputedStyle(doc.eztext)['font-size']);
+    fontsize += delta;
+    doc.eztext.style.fontSize = '' + fontsize + 'px';
+}
+
+function onLoad()
+{
+    ez.setup();
+
+    doc.titlebar = document.getElementById('titlebar');
+    doc.eztextframe = document.getElementById('eztextframe');
+    doc.eztext = document.getElementById('eztext');
+    doc.ezdraw = ez.canvas;
+
+    doc.editor = ace.edit('eztext');
+    doc.editor.setTheme('ace/theme/chrome');
+    doc.editor.session.setMode('ace/mode/javascript');
+    doc.editor.focus();
+
+    doc.hta = document.getElementById('hiddenTextArea');
+    if (doc.hta.value.length == 0)
+    {
+        doc.hta.value = exampleCode;
+    }
+
+    onResize();
+
+    if (doc.editor.getValue().length == 0)
+    {
+        //doc.editor.setValue(exampleCode);
+        doc.editor.setValue(doc.hta.value);
+        doc.editor.selection.clearSelection();
+    }
+
+    button = document.getElementById('ezrun');
+    button.addEventListener('click', function() {
+        ez.setup();
+        let code = doc.editor.getValue();
+        doc.hta.value = code;
+        ez.runSimplifiedCode(code);
+    });
+    button.click();
+
+    doc.btnIncFont = document.getElementById('incfont');
+    doc.btnIncFont.addEventListener('click', function() { changeFont(+1); });
+    doc.btnDecFont = document.getElementById('decfont');
+    doc.btnDecFont.addEventListener('click', function() { changeFont(-1); });
+
+    window.addEventListener('keydown', function(e) {
+        if ((e.keyCode == 10 || e.keyCode == 13) && e.ctrlKey)
+            button.click();
+    });
+}
+
+function setElementPositionCSS(elem, x, y, w, h)
+{
+    elem.style.top = "" + y + "px";
+    elem.style.left = "" + x + "px";
+    elem.style.width = "" + w + "px";
+    elem.style.height = "" + h + "px";
+}
+
+function onResize()
+{
+    // w: Window
+    // b: title Bar
+    // m: Main area
+    // c: Canvas
+    // t: Text area
+    let ww = window.innerWidth;
+    let wh = window.innerHeight;
+
+    let bw = ww;
+    let bh = parseInt(getComputedStyle(doc.titlebar).height);
+    setElementPositionCSS(doc.titlebar, 0, 0, bw, bh)
+
+    let mx = 0;
+    let my = bh;
+    let mw = ww;
+    let mh = wh - bh;
+
+    let marg = 10;
+
+    let ctw, cth;
+    let cx, cy, cw, ch;
+    let tx, ty, tw, th;
+
+    if (mw > mh)
+    {
+        ctw = mw - 3 * marg;
+        cth = mh - 2 * marg;
+
+        cx = mx + marg;
+        cy = my + marg;
+        cw = ctw / 2;
+        ch = cth;
+        setElementPositionCSS(doc.ezdraw, cx, cy, cw, ch);
+
+        tx = mx + marg + cw + marg;
+        ty = my + marg;
+        tw = ctw / 2;
+        th = cth;
+        setElementPositionCSS(doc.eztextframe, tx, ty, tw, th);
+    }
+    else
+    {
+        ctw = mw - 2 * marg;
+        cth = mh - 3 * marg;
+
+        cx = mx + marg;
+        cy = my + marg;
+        cw = ctw;
+        ch = cth / 2;
+        setElementPositionCSS(doc.ezdraw, cx, cy, cw, ch);
+
+        tx = mx + marg;
+        ty = my + marg + ch + marg;
+        tw = ctw;
+        th = cth / 2;
+        setElementPositionCSS(doc.eztextframe, tx, ty, tw, th);
+    }
+
+    ez.resize(cw, ch);
+
+    let reslabel = document.getElementById('reslabel');
+    if (reslabel) {
+        let t = '';
+        t += 'v: ' + window.innerWidth + ' x ' + window.innerHeight + '  -  ';
+        t += 'd: ' + parseInt(cw) + ' x ' + parseInt(ch);
+        reslabel.innerText = t;
+    }
+}
+
+window.addEventListener('load', onLoad);
+window.addEventListener('resize', onResize);
+//////////////////////////////////////////////////
+    </script>
+</body>
+</html>
