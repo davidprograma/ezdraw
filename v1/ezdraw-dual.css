@@ -1,0 +1,126 @@
+* {
+    margin: 0;
+    padding: 0;
+}        
+body {
+    background-color: #333;
+}    
+
+#titlebar {
+    background-color: #246;
+    height: 40px;
+    color: white;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    font-size: 24px;
+    line-height: 40px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+#title {
+    float: left;
+    margin-left: 20px;
+    cursor: default;
+    font-weight: bold;
+}
+
+#reslabel {
+    display:none;
+}
+
+.titlebtn:hover .tooltip {
+    visibility: visible;
+}
+
+.titlebtn .tooltip {
+    visibility: hidden;
+    font-size: 16px;
+    line-height: 20px;
+    margin-top: 5px;
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #444;
+    position: absolute;
+    color: #FEA;
+    z-index: 1;
+}
+
+#ezrun .tooltip {
+    right: 10px;
+}
+
+#incfont:hover, #decfont:hover, #ezrun:hover, #btnsave:hover, #btnload:hover, #btnnew:hover {
+    color: #FC4;
+}
+
+#incfont, #decfont, #ezrun, #btnsave, #btnload, #btnnew {
+    float: right;
+    padding: 0px 10px;
+    margin-right: 15px;
+    margin-top: 3px;
+    font-size: 22px;
+    line-height: 30px;
+    align-self: right;
+    cursor: pointer;
+    border-top: 2px solid #CCC8;
+    border-left: 2px solid #CCC8;
+    border-right: 2px solid #2228;
+    border-bottom: 2px solid #2228;
+    border-radius: 5px;
+    user-select: none;
+
+}
+
+.iconnew, .iconopen, .iconsave, .iconrun {
+    display: inline-block;
+    vertical-align: middle;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 2px;
+    margin-right: 8px;
+    background-size: 100% 100%;
+}
+
+.iconnew {
+    background-image: url('./icons/new.png');
+}
+
+.iconopen {
+    background-image: url('./icons/open.png');
+}
+
+.iconsave {
+    background-image: url('./icons/save.png');
+}
+
+.iconrun {
+    background-image: url('./icons/run.png');
+}
+
+.icontext {
+/*    display: none;*/
+    visibility: visible;
+}
+
+#ezdraw {
+    position: fixed;
+    border-radius: 10px;
+}
+
+#eztextframe {
+    position: fixed;
+    background-color: #FFF;
+    border-radius: 10px;
+}
+
+#eztext {
+    background-color: transparent;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    border: none;
+    outline: none;
+    font-size: 25px;
+    border-radius: 10px;
+}
+

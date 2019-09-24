@@ -9,17 +9,13 @@ let dummydraw = function() { ez.clear(); }
 let createEZDraw = function() {
     let ez = {};
 
-    let xmin = -1000;
-    let xmax = 1000;
-    let ymin = -1000;
-    let ymax = 1000;
+    let xmin, xmax, ymin, ymax;
 
-    let def_linewidth = 5;
+    let def_linewidthfactor = 0.002;
     let def_linecolor = '#444';
     let def_fillcolor = '#CCC';
 
-    let lineactive = true;
-    let fillactive = true;
+    let lineactive, fillactive;
 
     ez.width = 500;
     ez.height = 500;
@@ -44,9 +40,16 @@ let createEZDraw = function() {
 
         ctx = ez.canvas.getContext('2d');
 
+        setDefaults();
+    }
+
+    let setDefaults = function()
+    {
+        xmin = ymin = -1000;
+        xmax = ymax = 1000;
         xform();
 
-        ctx.lineWidth = def_linewidth;
+        lineactive = fillactive = true;
         ctx.strokeStyle = def_linecolor;
         ctx.fillStyle = def_fillcolor;
     }
@@ -130,6 +133,9 @@ let createEZDraw = function() {
             ty += vh;
 
         ctx.setTransform(sx, 0, 0, sy, tx, ty);
+
+        let wwh = Math.max(ww,wh);
+        ctx.lineWidth = wwh * def_linewidthfactor;
     }
 
     ez.resize = function(w, h)
@@ -335,7 +341,7 @@ let createEZDraw = function() {
 
     let runFullCode = function(fullcode)
     {
-        //console.log(fullcode);
+        // console.log(fullcode);
         try {
             eval(fullcode);
             ez.run();
@@ -348,7 +354,7 @@ let createEZDraw = function() {
     let function_prolog = '(function(){';
     let trycatch_prolog = 'try {';
     let ez_subst_prolog = '';
-    let imp_draw_prolog = 'function _implicit_draw(){'
+    let imp_draw_prolog = 'function _implicit_draw(){setDefaults();'
     let imp_draw_epilog = ';if(typeof(draw)==="function"){draw();ez.draw=draw;}}';
     let ez_subst_epilog = ';ez.draw=_implicit_draw;'
     let trycatch_epilog = '}catch(e){ez.onCodeException(e)}'
@@ -390,12 +396,13 @@ let createEZDraw = function() {
 
     ez.runSimplifiedCode = function(code)
     {
+        if (code.length == 0) code = "clear('#444');";
         let fullcode = '';
         fullcode += function_prolog;
         fullcode += trycatch_prolog;
         fullcode += ez_subst_prolog;
         fullcode += imp_draw_prolog;
-        fullcode += code;
+        fullcode += code + '\n';
         fullcode += imp_draw_epilog;
         fullcode += ez_subst_epilog;
         fullcode += trycatch_epilog;
