@@ -75,7 +75,7 @@ function onLoad()
         doc.editor.focus();
         ez.runSimplifiedCode(code);
     });
-    button.click();
+    ez.runSimplifiedCode(exampleCode);
 
     doc.btnIncFont = document.getElementById('incfont');
     doc.btnIncFont.addEventListener('click', function() {
@@ -107,7 +107,6 @@ function onLoad()
         input.addEventListener('change', function(e)
         {
             var file = event.target.files[0];
-            dbg(file);
             if (file.size > 1048576) {
                 alert('File is bigger than 1Mb');
                 selected_file = null;

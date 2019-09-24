@@ -417,8 +417,6 @@ ez = createEZDraw();
 
 let onWindowLoad = function()
 {
-    dbg('onWindowLoad');
-
     ez.setup();
     ez.run();
 }
