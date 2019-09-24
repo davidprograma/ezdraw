@@ -1,10 +1,11 @@
 let exampleCode = "clear('white');"
 
-let docName = 'ezdraw_example';
+let defDocName = 'ezdraw_script';
+let docName = defDocName;
 
 function download(filename, text) {
     var pom = document.createElement('a');
-    pom.setAttribute('href', 'data:text/ezjs;charset=utf-8,' + encodeURIComponent(text));
+    pom.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
     pom.setAttribute('download', filename);
 
     if (document.createEvent) {
@@ -71,15 +72,22 @@ function onLoad()
         ez.setup();
         let code = doc.editor.getValue();
         doc.hta.value = code;
+        doc.editor.focus();
         ez.runSimplifiedCode(code);
     });
     button.click();
 
     doc.btnIncFont = document.getElementById('incfont');
-    doc.btnIncFont.addEventListener('click', function() { changeFont(+1); });
+    doc.btnIncFont.addEventListener('click', function() {
+        changeFont(+1);
+        doc.editor.focus();
+    });
 
     doc.btnDecFont = document.getElementById('decfont');
-    doc.btnDecFont.addEventListener('click', function() { changeFont(-1); });
+    doc.btnDecFont.addEventListener('click', function() {
+        changeFont(-1);
+        doc.editor.focus();
+    });
 
     doc.btnSave = document.getElementById('btnsave');
     doc.btnSave.addEventListener('click', function() {
@@ -89,6 +97,7 @@ function onLoad()
         filename += '.ezjs';
         let code = doc.editor.getValue();
         download(filename, code);
+        doc.editor.focus();
     });
 
     doc.btnLoad = document.getElementById('btnload');
@@ -129,10 +138,12 @@ function onLoad()
         if (confirm('Erase all text in editor and create a new script?')) {
             doc.editor.setValue('');
             doc.editor.selection.clearSelection();
+            docName = defDocName;
             button.click();
         } else {
             // Do nothing!
         }
+        doc.editor.focus();
     });
 
     window.addEventListener('keydown', function(e) {
