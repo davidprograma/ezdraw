@@ -1,5 +1,7 @@
 let exampleCode = "clear('white');"
 
+let docName = 'ezdraw_example';
+
 function download(filename, text) {
     var pom = document.createElement('a');
     pom.setAttribute('href', 'data:text/ezjs;charset=utf-8,' + encodeURIComponent(text));
@@ -81,7 +83,7 @@ function onLoad()
 
     doc.btnSave = document.getElementById('btnsave');
     doc.btnSave.addEventListener('click', function() {
-        var filename = prompt("Please enter name of script to be saved (without extension)", "ezdraw_example");
+        var filename = prompt("Please enter name of script to be saved (without extension)", docName);
         if (filename == null || filename == '')
             return;
         filename += '.ezjs';
@@ -96,6 +98,7 @@ function onLoad()
         input.addEventListener('change', function(e)
         {
             var file = event.target.files[0];
+            dbg(file);
             if (file.size > 1048576) {
                 alert('File is bigger than 1Mb');
                 selected_file = null;
@@ -107,6 +110,9 @@ function onLoad()
                 var text = reader.result;
                 doc.editor.setValue(text);
                 doc.editor.selection.clearSelection();
+                docName = file.name;
+                if (docName.endsWith('.ezjs'))
+                    docName = docName.substr(0, docName.length-5);
                 button.click();
             };
 
