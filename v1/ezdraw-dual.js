@@ -115,6 +115,8 @@ function onLoad()
 
             var reader = new FileReader();
             reader.onload = function(f) {
+                lereader = reader;
+                dbg(lereader);
                 var text = reader.result;
                 doc.editor.setValue(text);
                 doc.editor.selection.clearSelection();
@@ -127,7 +129,7 @@ function onLoad()
             reader.onabort = function() { alert('File read aborted'); }
             reader.onerror = function() { alert('File read error'); }
 
-            reader.readAsText(file, 'ascii');
+            reader.readAsText(file);
         });
         input.click();    
     });
