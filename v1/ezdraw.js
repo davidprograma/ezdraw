@@ -197,7 +197,10 @@ let createEZDraw = function() {
 
     ez.linewidth = function(value)
     {
-        ctx.lineWidth = value;
+        if (value > 0)
+            ctx.lineWidth = value;
+        else
+            ctx.lineWidth = 1e-30;
     }
 
     ez.linecolor = function(value)
@@ -212,6 +215,12 @@ let createEZDraw = function() {
             ctx.strokeStyle = def_linecolor;
             lineactive = false;
         }
+    }
+
+    ez.linecap = function(value)
+    {
+        if (value == 'butt' || value == 'round' || value == 'square')
+            linecap = value;
     }
 
     ez.fillcolor = function(value)
@@ -240,7 +249,9 @@ let createEZDraw = function() {
 
     let drawLinePrimitive = function()
     {
-        ctx.stroke();
+        if (lineactive) {
+            ctx.stroke();
+        }
     }
 
     ez.circle = function(x, y, r)
@@ -366,6 +377,7 @@ let createEZDraw = function() {
         'xrange',
         'yrange',
         'linewidth',
+        'linecap',
         'linecolor',
         'fillcolor',
         'line',
