@@ -54,7 +54,7 @@ let createEZDraw = function() {
         ctx.fillStyle = def_fillcolor;
     }
 
-    ez.xrange = function(x1,x2)
+    ez.xlimits = function(x1,x2)
     {
         // make sure x1 <= x2
         if (x1 > x2) { let t = x1; x1 = x2; x2 = t; }
@@ -64,7 +64,7 @@ let createEZDraw = function() {
         xform();
     }
 
-    ez.yrange = function(y1,y2)
+    ez.ylimits = function(y1,y2)
     {
         // make sure y1 <= y2
         if (y1 > y2) { let t = y1; y1 = y2; y2 = t; }
@@ -374,8 +374,8 @@ let createEZDraw = function() {
     let ez_subst_list = [
         'ctx',
         'clear',
-        'xrange',
-        'yrange',
+        'xlimits',
+        'ylimits',
         'linewidth',
         'linecap',
         'linecolor',
