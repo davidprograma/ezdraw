@@ -90,24 +90,70 @@ Afecta a los siguientes comandos posteriores:
 - rect (relleno)
 - polygon (relleno)
 
----
----
----
----
+drawlimits
+----------
+Dibuja los límites del dibujo (que se establecen con xlimits e ylimits).
 
+    drawlimits();
 
-comandos
-- clear       
-- xrange      
-- yrange      
-- linewidth   
-- linecolor   
-- fillcolor   
-- line        
-- rect        
-- circle      
-- polyline    
-- polygon     
-- drawlimites 
-- drawaxes    
-- redraw      
+drawaxes
+--------
+Dibuja los ejes de coordenadas, en color rojo el eje x (horizontal) y en color verde el eje y (vertical).
+
+    drawaxes();
+
+xlimits
+-------
+Establece los límites del dibujo en la dirección horizontal.
+
+    xlimits(XMIN, XMAX);
+
+Ejemplo:
+
+    xlimits(-500, 1200);
+
+Los límites por defecto en la dirección horizontal son (-1000, 1000).
+
+ylimits
+-------
+Establece los límites del dibujo en la dirección vertical.
+
+    ylimits(YMIN, YMAX);
+
+Ejemplo:
+
+    ylimits(-1500, 2100);
+
+Los límites por defecto en la dirección vertical son (-1000, 1000).
+
+redraw
+------
+Solicita el redibujado, dentro de la función de animación draw().
+
+    redraw();
+
+Ejemplo:
+
+    let x = -500;
+    function draw() {
+        circle (x, 0, 100);
+        x = x + 10;
+        if (x < 500)
+            redraw();
+    }
+
+deltatime
+---------
+Devuelve el tiempo (en segundos) que se tardó en dibujar el fotograma anterior. Función pensada para llamar en el interior de la función draw().
+
+    let t = deltatime();
+
+Ejemplo:
+
+    let x = 0;
+    function draw() {
+        circle(x, 0, 50);
+        x = x + 100 * deltatime();
+        redraw();
+    }
+
