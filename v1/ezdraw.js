@@ -74,6 +74,8 @@ let createEZDraw = function() {
         xform();
     }
 
+    let defaultLineWidth = 1;
+
     let xform = function()
     {
         let dbgxform = false;
@@ -135,7 +137,8 @@ let createEZDraw = function() {
         ctx.setTransform(sx, 0, 0, sy, tx, ty);
 
         let wwh = Math.max(ww,wh);
-        ctx.lineWidth = wwh * def_linewidthfactor;
+        defaultLineWidth = wwh * def_linewidthfactor;
+        ez.linewidth(defaultLineWidth);
     }
 
     ez.resize = function(w, h)
@@ -319,6 +322,8 @@ let createEZDraw = function() {
     }
 
     ez.drawlimits = function() {
+        ez.linewidth(defaultLineWidth);
+        ez.linecolor('black');
         ez.line(xmin,ymin,xmax,ymin);
         ez.line(xmax,ymin,xmax,ymax);
         ez.line(xmin,ymax,xmax,ymax);
@@ -326,12 +331,12 @@ let createEZDraw = function() {
     }
 
     ez.drawaxes = function() {
-        let color = ctx.strokeStyle;
+        ez.linewidth(defaultLineWidth);
         ez.linecolor('red');
         ez.line(0,0,xmax,0);
         ez.linecolor('green');
         ez.line(0,0,0,ymax);
-        ez.linecolor(color);
+        ez.linecolor('black');
         ez.line(xmin,0,0,0);
         ez.line(0,ymin,0,0);
     }
